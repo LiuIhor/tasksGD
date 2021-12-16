@@ -18,7 +18,6 @@ public class Main {
                 while (scanner.hasNext()) {
                     dataFromFile.add(scanner.nextLine()); // fill the list with data lines from file
                 }
-                scanner.close();
                 invertedIndex = loadInvertedIndex(dataFromFile); // get the Map<String, Set<Integer>>
                 System.out.println(invertedIndex);
                 menu(invertedIndex, dataFromFile); //main logic program with user`s menu

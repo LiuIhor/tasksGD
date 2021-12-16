@@ -14,27 +14,24 @@ public class Controller {
 
         while (flag) {
             System.out.println("\n=== Menu ===");
-            System.out.println("1. Find a person\n" +
-                    "2. Print all people\n" +
-                    "0. Exit");
+            System.out.println("""
+                    1. Find a person
+                    2. Print all people
+                    0. Exit""");
 
             int action = Integer.parseInt(sc.nextLine());
 
             switch (action) {
-                case 1:
+                case 1 -> {
                     Set<Integer> searchResult = strategySearch(invertedIndex, dataFromFile);
                     printResult(searchResult, dataFromFile);
-                    break;
-                case 2:
-                    printAllPeople(dataFromFile);
-                    break;
-                case 0:
+                }
+                case 2 -> printAllPeople(dataFromFile);
+                case 0 -> {
                     flag = false;
                     System.out.println("\nBye!");
-                    break;
-                default:
-                    System.out.println("\nIncorrect option! Try again.");
-                    break;
+                }
+                default -> System.out.println("\nIncorrect option! Try again.");
             }
         }
         sc.close();
@@ -48,18 +45,10 @@ public class Controller {
         String query = sc.nextLine();
         ContextSearch contextSearch = new ContextSearch();
         switch (searchingMethod) {
-            case "ALL":
-                contextSearch.setSearchingMethod(new StrategySearchAll());
-                break;
-            case "ANY":
-                contextSearch.setSearchingMethod(new StrategySearchAny());
-                break;
-            case "NONE":
-                contextSearch.setSearchingMethod(new StrategySearchNone());
-                break;
-            default:
-                System.out.println("\nIncorrect strategy! Try again.");
-                break;
+            case "ALL" -> contextSearch.setSearchingMethod(new StrategySearchAll());
+            case "ANY" -> contextSearch.setSearchingMethod(new StrategySearchAny());
+            case "NONE" -> contextSearch.setSearchingMethod(new StrategySearchNone());
+            default -> System.out.println("\nIncorrect strategy! Try again.");
         }
         sc.close();
         return contextSearch.search(invertedIndex, dataFromFile, query);
@@ -78,7 +67,7 @@ public class Controller {
      * Method to display all founded data
      * */
     private static void printResult(Set<Integer> searchResult, List<String> dataFromFile) {
-        if (searchResult.size() == 0) {
+        if (searchResult.isEmpty()) {
             System.out.println("No matching people found");
         } else {
             System.out.println(searchResult.size() + " person found");

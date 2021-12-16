@@ -19,6 +19,6 @@ public class ContextSearch {
     }
 
     public Set<Integer> search(Map<String, Set<Integer>> invertedIndex, List<String> dataFromFile, String query) {
-        return this.searchingMethod.search(invertedIndex, dataFromFile, query);
+        return searchingMethod.search(invertedIndex, dataFromFile, query);
     }
 }
