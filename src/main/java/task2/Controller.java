@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  * Class with program`s main logic
- * */
+ */
 public class Controller {
 
     public static void menu(Map<String, Set<Integer>> invertedIndex, List<String> dataFromFile) {
@@ -37,17 +37,17 @@ public class Controller {
         sc.close();
     }
 
-    private static Set<Integer>  strategySearch(Map<String, Set<Integer>> invertedIndex, List<String> dataFromFile) {
+    private static Set<Integer> strategySearch(Map<String, Set<Integer>> invertedIndex, List<String> dataFromFile) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Select a matching strategy: ALL, ANY, NONE");
-        String searchingMethod = sc.nextLine();
+        SearchingMethod searchingMethod = SearchingMethod.valueOf(sc.nextLine());
         System.out.println("Enter a name or email to search all suitable people.");
         String query = sc.nextLine();
         ContextSearch contextSearch = new ContextSearch();
         switch (searchingMethod) {
-            case "ALL" -> contextSearch.setSearchingMethod(new StrategySearchAll());
-            case "ANY" -> contextSearch.setSearchingMethod(new StrategySearchAny());
-            case "NONE" -> contextSearch.setSearchingMethod(new StrategySearchNone());
+            case ALL -> contextSearch.setSearchingMethod(new StrategySearchAll());
+            case ANY -> contextSearch.setSearchingMethod(new StrategySearchAny());
+            case NONE -> contextSearch.setSearchingMethod(new StrategySearchNone());
             default -> System.out.println("\nIncorrect strategy! Try again.");
         }
         sc.close();
@@ -56,7 +56,7 @@ public class Controller {
 
     /**
      * Method to display all data from a file
-     * */
+     */
     private static void printAllPeople(List<String> dataFromFile) {
         for (String person : dataFromFile) {
             System.out.println(person);
@@ -65,7 +65,7 @@ public class Controller {
 
     /**
      * Method to display all founded data
-     * */
+     */
     private static void printResult(Set<Integer> searchResult, List<String> dataFromFile) {
         if (searchResult.isEmpty()) {
             System.out.println("No matching people found");
@@ -78,8 +78,8 @@ public class Controller {
     }
 
     /**
-     *  Method to transform from data from a file to inverted indexes
-     *  */
+     * Method to transform from data from a file to inverted indexes
+     */
     public static Map<String, Set<Integer>> loadInvertedIndex(List<String> dataFromFile) {
         Map<String, Set<Integer>> invertedIndex = new HashMap<>();
         Set<Integer> indexes;
@@ -91,7 +91,7 @@ public class Controller {
                     indexes = new HashSet<>();
                 }
                 indexes.add(i);
-                invertedIndex.put(word.toUpperCase(),indexes);
+                invertedIndex.put(word.toUpperCase(), indexes);
             }
         }
         return invertedIndex;

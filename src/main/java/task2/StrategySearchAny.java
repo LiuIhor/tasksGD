@@ -14,7 +14,7 @@ public class StrategySearchAny implements StrategySearch{
         Set<Integer> searchResult = new HashSet<>();
 
         for (String q : querySet) {
-            Set<Integer> values = invertedIndex.getOrDefault(q.toUpperCase(Locale.ROOT), new HashSet<>(Set.of()));
+            Set<Integer> values = invertedIndex.getOrDefault(q.toUpperCase(Locale.ROOT), new HashSet<>());
             searchResult.addAll(new HashSet<>(values));
         }
         return searchResult;
