@@ -6,22 +6,12 @@ public enum Symbol {
         public String toString() {
             return "X";
         }
-
-        @Override
-        public Symbol oppose() {
-            return O;
-        }
     },
 
     O {
         @Override
         public String toString() {
             return "O";
-        }
-
-        @Override
-        public Symbol oppose() {
-            return X;
         }
     },
 
@@ -30,12 +20,5 @@ public enum Symbol {
         public String toString() {
             return "_";
         }
-
-        @Override
-        public Symbol oppose() {
-            return null;
-        }
-    };
-
-    public abstract Symbol oppose();
+    }
 }
