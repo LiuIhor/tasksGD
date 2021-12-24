@@ -11,8 +11,7 @@ import java.util.stream.Collectors;
 
 public class Block implements Serializable {
     @Serial
-    private static final long serialVersionUID = 7L;
-    private static final int GET_AMOUNT = Blockchain.getAmount();
+    private static final long serialVersionUID = -1L;
     private final long id;
     private final long timeStamp;
     private String previousHashBlock;
@@ -21,22 +20,22 @@ public class Block implements Serializable {
     private long generationTime;
     private String newN;
     private List<Transaction> blockTransactions = new ArrayList<>();
-    private String getsInfo;
-    private final Miner createdByMiner;
+    private String info;
+    private final Miner miner;
 
     private Block(long id, Miner miner) {
         this.id = id;
         this.timeStamp = new Date().getTime();
-        this.createdByMiner = miner;
-        setGetsInfo();
+        this.miner = miner;
+        setInfo();
     }
 
-    public void setGetsInfo() {
-        getsInfo = String.format("%s gets %d VC", createdByMiner.getMinerName(), GET_AMOUNT);
+    public void setInfo() {
+        info = String.format("%s gets %d VC", miner.getMinerName(), Blockchain.getAmount());
     }
 
-    public String getGetsInfo() {
-        return getsInfo;
+    public String getInfo() {
+        return info;
     }
 
     public void setNewN(String newN) {
@@ -91,7 +90,10 @@ public class Block implements Serializable {
         if (blockTransactions.isEmpty()) {
             return "no data";
         } else {
-            return blockTransactions.stream().map(blockData -> "\n" + blockData).collect(Collectors.joining());
+            return blockTransactions
+                    .stream()
+                    .map(blockData -> "\n" + blockData)
+                    .collect(Collectors.joining());
         }
     }
 
@@ -99,15 +101,15 @@ public class Block implements Serializable {
         Block block = new Block(id, miner);
         block.setPreviousHashBlock(hashBlock);
         block.generateHashCodeWithPrefix(numberZero);
-        block.generationTime = (new Date().getTime() - block.timeStamp);
+        block.generationTime = new Date().getTime() - block.timeStamp;
         return block;
     }
 
     @Override
     public String toString() {
         return "Block: \n" +
-                "Created by: " + createdByMiner.getMinerName() + "\n" +
-                getsInfo + "\n" +
+                "Created by: " + miner.getMinerName() + "\n" +
+                info + "\n" +
                 "Id: " + id + "\n" +
                 "Timestamp: " + timeStamp + "\n" +
                 "Magic number: " + magicNumber + "\n" +

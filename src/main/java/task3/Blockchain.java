@@ -5,9 +5,8 @@ import task3.utils.SignatureUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Blockchain implements Serializable {
@@ -19,13 +18,13 @@ public class Blockchain implements Serializable {
     private static final long MIN_TIME = 20;
     private static final long MAX_TIME = 100;
     private static boolean receivingTransactionsOn = true;
-    private static final TreeSet<Transaction> receivedTransactionsSet = new TreeSet<>();
+    private static final Set<Transaction> receivedTransactionsSet = new LinkedHashSet<>();
     private MinersActions minersActions;
-    private final ArrayList<Block> blocks = new ArrayList<>();
+    private final List<Block> blocks = new ArrayList<>();
     private String blockchainHashCode = "0";
     private int newNumberZero;
-    private Block currentLastBlock;
-    private long currentLastTransactionID;
+    private Block lastBlock;
+    private long lastTransactionID;
     private static final Blockchain blockchainInstance = new Blockchain(NEW_NUMBER_ZERO);
 
     public Blockchain(int newNumberZero) {
@@ -36,8 +35,8 @@ public class Blockchain implements Serializable {
         this.minersActions = minersActions;
     }
 
-    public Block getCurrentLastBlock() {
-        return currentLastBlock;
+    public Block getLastBlock() {
+        return lastBlock;
     }
 
     public int getNewNumberZero() {
@@ -48,7 +47,7 @@ public class Blockchain implements Serializable {
         return blockchainHashCode;
     }
 
-    public synchronized ArrayList<Block> getBlocks() {
+    public synchronized List<Block> getBlocks() {
         return blocks;
     }
 
@@ -69,21 +68,16 @@ public class Blockchain implements Serializable {
 
         while (receivingTransactionsOn) {
             try {
-                Thread.sleep(timeSleep);
+                TimeUnit.MILLISECONDS.sleep(timeSleep);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             Transaction performedTransaction = minersActions.createTransaction();
-
             boolean isValidID = isTransactionIDValid(performedTransaction);
-
             if (!isValidID) {
                 return;
             }
-
             boolean isSignatureValid = false;
-
             try {
                 isSignatureValid = SignatureUtils
                         .verifySignature(performedTransaction.getTransactionStringAsByteArr(), performedTransaction.getSignature());
@@ -115,7 +109,7 @@ public class Blockchain implements Serializable {
                 saveTransactionsToBlockData(block);
                 newStatusNumberZero(block);
                 setCurrentLastTransactionID();
-                currentLastBlock = block;
+                lastBlock = block;
             }
         } else if (!validateBlockchainMaxLength()) {
             receivingTransactionsOn = false;
@@ -124,10 +118,10 @@ public class Blockchain implements Serializable {
 
     private void setCurrentLastTransactionID() {
         if (blocks.size() < 2) {
-            currentLastTransactionID = 0;
+            lastTransactionID = 0;
         }
 
-        currentLastTransactionID = blocks.stream()
+        lastTransactionID = blocks.stream()
                 .map(Block::getBlockTransactions)
                 .filter(set -> !set.isEmpty())
                 .flatMap(List::stream)
@@ -157,7 +151,7 @@ public class Blockchain implements Serializable {
         if (blocks.isEmpty()) {
             return block.getId() == 1;
         } else {
-            return block.getId() == currentLastBlock.getId() + 1;
+            return block.getId() == lastBlock.getId() + 1;
         }
     }
 
@@ -169,7 +163,6 @@ public class Blockchain implements Serializable {
             if (newNumberZero > 0) {
                 newNumberZero--;
             }
-
             block.setNewN("N was decreased by 1");
         } else {
             block.setNewN("N stays the same");
@@ -183,13 +176,18 @@ public class Blockchain implements Serializable {
     }
 
     private List<Transaction> geTransactionsToSave() {
-        List<Transaction> transactionsToSave = receivedTransactionsSet.stream().filter(tr -> tr.getTransactionTime().compareTo(LocalDateTime.now()) < 0).collect(Collectors.toCollection(ArrayList::new));
+        List<Transaction> transactionsToSave = receivedTransactionsSet
+                .stream()
+                .filter(tr -> tr.getTransactionTime()
+                        .compareTo(LocalDateTime.now()) < 0)
+                .collect(Collectors.toList());
+
         transactionsToSave.forEach(receivedTransactionsSet::remove);
         return transactionsToSave;
     }
 
     private boolean isTransactionIDValid(Transaction transaction) {
-        return transaction.getTransactionID() > currentLastTransactionID;
+        return transaction.getTransactionID() > lastTransactionID;
     }
 
     @Override

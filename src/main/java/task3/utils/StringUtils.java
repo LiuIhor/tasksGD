@@ -34,7 +34,7 @@ public class StringUtils {
         String startOfHashcode;
 
         do {
-            Block currentLastBlock = Blockchain.getInstance().getCurrentLastBlock();
+            Block currentLastBlock = Blockchain.getInstance().getLastBlock();
 
             if (currentLastBlock != null && block.getId() <= currentLastBlock.getId()) {
                 return;
@@ -44,7 +44,7 @@ public class StringUtils {
             hashCode = applySha256(block.getPreviousHashBlock()
                     + block.getId()
                     + block.getTimeStamp()
-                    + block.getGetsInfo()
+                    + block.getInfo()
                     + magicNumber);
             startOfHashcode = hashCode.substring(0, numOfZeroes);
         } while (!zeroes.toString().equals(startOfHashcode));

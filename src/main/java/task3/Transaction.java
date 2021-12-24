@@ -17,7 +17,7 @@ public class Transaction implements Comparable<Transaction> {
     private static final Random random = new Random();
 
     private Miner sender = null;
-    private String receiverName = "";
+    private String receiverName;
 
     private int transactionAmount = 0;
     private long transactionID = 0;
