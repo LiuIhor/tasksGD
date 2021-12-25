@@ -189,6 +189,7 @@ public class Program {
 
     /**
      * This method checks and displays the game status
+     *
      */
     private static void check(String[] symbols, Symbol symbol) {
         if (checkWins(symbols, symbol) && checkWins(symbols, symbol.oppose()) ||
